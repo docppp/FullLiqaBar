@@ -5,7 +5,9 @@ from databaseErr import DatabaseError
 class Database(object):
     __DB_NAME = "liquorBar.db"
 
-    def __init__(self):
+    def __init__(self, dummy=None):
+        if dummy:
+            self.__DB_NAME = "liquorBar" + dummy + ".db"
         self.conn = sqlite3.connect(self.__DB_NAME)
         self.cur = self.conn.cursor()
         self.createTableRecipes()
