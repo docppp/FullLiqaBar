@@ -93,45 +93,12 @@ class TestDatabaseRecipes(unittest.TestCase):
 class TestIngredients(unittest.TestCase):
 
     def test_ingredientClassName(self):
-        self.assertEqual(ingredients.Ingredient.className(), "Ingredient")
+        self.assertEqual(ingredients.Ingredient.ingrType(), "Ingredient")
 
     def test_availableUnits(self):
         self.assertEqual(ingredients.Ingredient.availableUnits, ['ml', 'szt', 'g'])
 
-    def test_xmlParserHelperFunctions(self):
-        xml_string = "<Alcohol qty='1000' unit='ml'>Alcohol Name</Alcohol>"
-        self.assertEqual(ingredients.XmlParser._XmlParser__getClassFromTag(xml_string), "Alcohol")
-        self.assertEqual(ingredients.XmlParser._XmlParser__getQtyFromTag(xml_string), "1000")
-        self.assertEqual(ingredients.XmlParser._XmlParser__getUnitFromTag(xml_string), "ml")
-        self.assertEqual(ingredients.XmlParser._XmlParser__getNameFromTag(xml_string), "Alcohol Name")
 
-    def test_xmlParserStringFormat(self):
-        alc = ingredients.Alcohol("Alcohol Name", 1000)
-        alc_xml = ingredients.XmlParser(alc).xml_string
-        alc_str = "<Alcohol qty='1000' unit='ml'>Alcohol Name</Alcohol>"
-        self.assertEqual(alc_xml, alc_str)
-
-        fil = ingredients.Filler("Filler Name", 100)
-        fil_xml = ingredients.XmlParser(fil).xml_string
-        fil_str = "<Filler qty='100' unit='ml'>Filler Name</Filler>"
-        self.assertEqual(fil_xml, fil_str)
-
-        add = ingredients.Addon("Addon Name", 30, "g")
-        add_xml = ingredients.XmlParser(add).xml_string
-        add_str = "<Addon qty='30' unit='g'>Addon Name</Addon>"
-        self.assertEqual(add_xml, add_str)
-
-    def test_xmlParserFromString(self):
-        alc_str = "<Alcohol qty='1000' unit='ml'>Alcohol Name</Alcohol>"
-        alc = ingredients.Alcohol("Alcohol Name", 1000)
-        alc_from_xml = ingredients.XmlParser(alc_str).ingr
-        self.assertEqual(alc.name, alc_from_xml.name)
-        self.assertEqual(alc.qty, alc_from_xml.qty)
-        self.assertEqual(alc.unit, alc_from_xml.unit)
-
-    def test_xmlParserRaises(self):
-        # something went wrong here. FIXIT
-        pass
 
 
 if __name__ == '__main__':

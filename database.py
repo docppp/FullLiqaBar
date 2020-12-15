@@ -23,6 +23,7 @@ class Database(object):
                         (ID   INTEGER,
                          NAME TEXT    NOT NULL,
                          PATH TEXT    NOT NULL,
+                         INGR TEXT,
                          PRIMARY KEY(ID, NAME, PATH));''')
         self.conn.commit()
 
@@ -38,14 +39,18 @@ class Database(object):
         path = self.cur.execute("SELECT PATH FROM RECIPES WHERE NAME=?", (cocktail_name,)).fetchone()
         return path[0] if path else None
 
-    def addNewRecipe(self, cocktail_name, cocktail_path):
+    def addNewRecipe(self, cocktail_name, cocktail_path, cocktail_ingr=None):
         if self.isRecipeNameExists(cocktail_name):
             err = f'Cannot add to database. Cocktail with name {cocktail_name} already exists.'
             raise DatabaseError(err)
         if self.isRecipePathExists(cocktail_path):
             err = f'Cannot add to database. Cocktail with path {cocktail_path} already exists.'
             raise DatabaseError(err)
-        self.cur.execute("INSERT INTO RECIPES (NAME,PATH) VALUES (?, ?)", (cocktail_name, cocktail_path))
+        if not cocktail_ingr:
+            self.cur.execute("INSERT INTO RECIPES (NAME,PATH) VALUES (?, ?)", (cocktail_name, cocktail_path))
+        else:
+            self.cur.execute("INSERT INTO RECIPES (NAME,PATH,INGR) VALUES (?, ?, ?)",
+                             (cocktail_name, cocktail_path, cocktail_ingr))
         self.conn.commit()
 
     def deleteRecipe(self, cocktail_name):

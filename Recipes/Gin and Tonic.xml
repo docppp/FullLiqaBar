@@ -1,14 +1,9 @@
-<Recipe version="1">
+<Recipe>
     <Name>Gin and Tonic</Name>
     <Ingredients>
-        <Base>
-            <Alcohol quantity='20' unit='ml'>Gin</Alcohol>
-        </Base>
-        <Fillers>
-            <Filler quantity='80' unit='ml'>Tonic</Filler>
-        </Fillers>
-        <Misc>
-            <Addon quantity='0.5' unit='szt'>Limonka</Addon>
-        </Misc>
+        <Alcohol quantity="20" unit="ml">Gin</Alcohol>
+        <Alcohol quantity="20" unit="ml">Gin2</Alcohol>
+        <Filler quantity="80" unit="ml">Tonic</Filler>
+        <Addon quantity="0.5" unit="szt">Limonka</Addon>
     </Ingredients>
 </Recipe>
