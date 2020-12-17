@@ -23,7 +23,7 @@ class Ingredient:
 
 
 class Alcohol(Ingredient):
-    def __init__(self, name, qty,):
+    def __init__(self, name, qty):
         super().__init__(name, qty, 'ml')
 
 

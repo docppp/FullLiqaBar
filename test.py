@@ -94,9 +94,53 @@ class TestIngredients(unittest.TestCase):
 
     def test_ingredientClassName(self):
         self.assertEqual(ingredients.Ingredient.ingrType(), "Ingredient")
+        self.assertEqual(ingredients.Alcohol.ingrType(), "Alcohol")
+        self.assertEqual(ingredients.Filler.ingrType(), "Filler")
+        self.assertEqual(ingredients.Addon.ingrType(), "Addon")
 
     def test_availableUnits(self):
         self.assertEqual(ingredients.Ingredient.availableUnits, ['ml', 'szt', 'g'])
+
+    def test_unitValueInCreatedIngr(self):
+        self.assertEqual(ingredients.Alcohol("name", 100).unit, "ml")
+        self.assertEqual(ingredients.Filler("name", 100).unit, "ml")
+        self.assertEqual(ingredients.Addon("name", 100, "szt").unit, "szt")
+
+
+class TestRecipe(unittest.TestCase):
+
+    xml_string = """<Recipe>
+  <Name>Gin and Tonic</Name>
+  <Ingredients>
+    <Alcohol quantity="20" unit="ml">Gin</Alcohol>
+    <Alcohol quantity="50" unit="ml">Gin2</Alcohol>
+    <Filler quantity="80" unit="ml">Tonic</Filler>
+    <Addon quantity="0.5" unit="szt">Limonka</Addon>
+  </Ingredients>
+</Recipe>"""
+    name = "Gin and Tonic"
+    alc = [ingredients.Alcohol("Gin", 20), ingredients.Alcohol("Gin2", 50)]
+    fil = [ingredients.Filler("Tonic", 80)]
+    add = [ingredients.Addon("Limonka", 0.5, "szt")]
+
+    def test_listOfIngr(self):
+        r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
+        self.assertEqual(r.listOfIngr(), self.alc + self.fil + self.add)
+
+    def test_listOfIngrNames(self):
+        r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
+        names = [x.name for x in (self.alc + self.fil + self.add)]
+        self.assertEqual(r.listOfIngrNames(), names)
+
+    def test_fromXmlString(self):
+        r = ingredients.Recipe.fromXmlString(self.xml_string)
+        self.assertEqual(r.name, "Gin and Tonic")
+        self.assertEqual(str(r.listOfIngr()), str(self.alc + self.fil + self.add))
+
+    def test_toXmlString(self):
+        r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
+        self.assertEqual(r.toXmlString(), self.xml_string)
+
 
 
 
