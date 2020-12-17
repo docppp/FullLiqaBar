@@ -110,13 +110,13 @@ class TestIngredients(unittest.TestCase):
 class TestRecipe(unittest.TestCase):
 
     xml_string = """<Recipe>
-  <Name>Gin and Tonic</Name>
-  <Ingredients>
-    <Alcohol quantity="20" unit="ml">Gin</Alcohol>
-    <Alcohol quantity="50" unit="ml">Gin2</Alcohol>
-    <Filler quantity="80" unit="ml">Tonic</Filler>
-    <Addon quantity="0.5" unit="szt">Limonka</Addon>
-  </Ingredients>
+    <Name>Gin and Tonic</Name>
+    <Ingredients>
+        <Alcohol quantity="20" unit="ml">Gin</Alcohol>
+        <Alcohol quantity="50" unit="ml">Gin2</Alcohol>
+        <Filler quantity="80" unit="ml">Tonic</Filler>
+        <Addon quantity="0.5" unit="szt">Limonka</Addon>
+    </Ingredients>
 </Recipe>"""
     name = "Gin and Tonic"
     alc = [ingredients.Alcohol("Gin", 20), ingredients.Alcohol("Gin2", 50)]

@@ -91,6 +91,6 @@ class RecipeParser:
         for ingr in recipe.listOfIngr():
             attr = {'quantity': str(ingr.qty), 'unit': ingr.unit}
             ElementTree.SubElement(ingredients, ingr.ingrType(), attr).text = ingr.name
-        ElementTree.indent(root)
+        ElementTree.indent(root, space="    ")
         return ElementTree.tostring(root, encoding='unicode')
 
