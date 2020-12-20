@@ -5,7 +5,7 @@ import os
 import ingredients
 
 
-class TestDatabaseRecipes(unittest.TestCase):
+class TestDatabase(unittest.TestCase):
 
     db = None
     dummy = 'Dummy'
@@ -13,38 +13,55 @@ class TestDatabaseRecipes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.db = database.Database(cls.dummy)
-        cls.db.cur.execute("INSERT INTO RECIPES (NAME,PATH) \
+        cls.db.cur.execute("INSERT INTO RECIPES (NAME, PATH) \
                            VALUES ('obviously-dummy-cocktail', 'obviously-dummy-path');")
+        cls.db.cur.execute("INSERT INTO SHELF (NAME, QTY) \
+                           VALUES ('obviously-dummy-bottle', 500);")
+        cls.db.cur.execute("INSERT INTO SHELF (NAME, QTY) \
+                            VALUES ('obviously-dummy-bottle2', 700);")
         cls.db.conn.commit()
 
     @classmethod
     def tearDownClass(cls):
         cls.db.cur.execute("DELETE FROM RECIPES;")
+        cls.db.cur.execute("DELETE FROM SHELF;")
         cls.db.conn.commit()
         cls.db.close()
         os.remove("liquorBar" + cls.dummy + ".db")
 
-    def test_1databaseObjectConnects(self):
-        self.assertTrue(isinstance(self.db.conn, sqlite3.Connection))
+    def test_checkIfAllMethodsAreCovered(self):
+        test_members = list(TestDatabase.__dict__.keys())
+        class_members = list(database.Database.__dict__.keys())
+        check_for = ['test_' + x for x in class_members if not x.startswith('_')]
+        are_covered = all(test in test_members for test in check_for)
+        if not are_covered:
+            diff = list(set(check_for)-set(test_members))
+            print("Database functions that are not covered: ", diff)
+            self.assertTrue(False)
 
-    def test_tableRecipesExists(self):
-        table = self.db.cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='RECIPES'")
-        table_name = next(iter(table))[0]
-        self.assertEqual(table_name, "RECIPES")
-
-    def test_isRecipeNameExistsReturnValue(self):
+    def test_isRecipeNameExists(self):
         self.assertFalse(self.db.isRecipeNameExists("obviously-non-existing-cocktail"))
         self.assertTrue(self.db.isRecipeNameExists("obviously-dummy-cocktail"))
 
-    def test_isRecipePathExistsReturnValue(self):
+    def test_isBottleOnShelf(self):
+        self.assertFalse(self.db.isBottleOnShelf("obviously-non-existing-bottle"))
+        self.assertTrue(self.db.isBottleOnShelf("obviously-dummy-bottle"))
+
+    def test_isRecipePathExists(self):
         self.assertFalse(self.db.isRecipePathExists("obviously-non-existing-path"))
         self.assertTrue(self.db.isRecipePathExists("obviously-dummy-path"))
 
-    def test_getRecipePathReturnValue(self):
+    def test_getRecipePath(self):
         path = self.db.getRecipePath("obviously-dummy-cocktail")
         path_none = self.db.getRecipePath("obviously-non-existing-cocktail")
         self.assertIsNone(path_none)
         self.assertEqual(path, "obviously-dummy-path")
+
+    def test_getBottleQty(self):
+        qty = self.db.getBottleQty("obviously-dummy-bottle")
+        qty_none = self.db.getBottleQty("obviously-non-existing-bottle")
+        self.assertEqual(qty_none, 0)
+        self.assertEqual(qty, 500)
 
     def test_addNewRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
@@ -63,6 +80,14 @@ class TestDatabaseRecipes(unittest.TestCase):
         self.assertFalse(self.db.isRecipeNameExists(name))
         self.assertFalse(self.db.isRecipePathExists(path))
 
+    def test_addNewBottle(self):
+        name = "obviously-almost-existing-bottle"
+        self.db.addNewBottle(name, 500)
+        self.assertTrue(self.db.isBottleOnShelf(name))
+        self.db.cur.execute("DELETE FROM SHELF WHERE NAME=?;", (name,))
+        self.db.conn.commit()
+        self.assertFalse(self.db.isBottleOnShelf(name))
+
     def test_deleteRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
             self.db.deleteRecipe("obviously-non-existing-cocktail")
@@ -77,17 +102,37 @@ class TestDatabaseRecipes(unittest.TestCase):
         self.assertFalse(self.db.isRecipeNameExists(name))
         self.assertFalse(self.db.isRecipePathExists(path))
 
+    def test_deleteBottleRaise(self):
+        with self.assertRaises(database.DatabaseError):
+            self.db.deleteBottle("obviously-non-existing-bottle")
+
+    def test_deleteBottle(self):
+        name = "obviously-almost-existing-bottle"
+        self.db.addNewBottle(name, 500)
+        self.assertTrue(self.db.isBottleOnShelf(name))
+        self.db.deleteBottle(name)
+        self.assertFalse(self.db.isBottleOnShelf(name))
+
     def test_changesCommits(self):
         db_checker = database.Database(self.dummy)
         name = "obviously-almost-existing-cocktail"
         path = "obviously-almost-existing-path"
+        bottle = "obviously-almost-existing-bottle"
         self.db.addNewRecipe(name, path)
+        self.db.addNewBottle(bottle, 500)
         self.assertTrue(db_checker.isRecipeNameExists(name))
         self.assertTrue(db_checker.isRecipePathExists(path))
+        self.assertTrue(db_checker.isBottleOnShelf(bottle))
         self.db.deleteRecipe(name)
+        self.db.deleteBottle(bottle)
         self.assertFalse(db_checker.isRecipeNameExists(name))
         self.assertFalse(db_checker.isRecipePathExists(path))
+        self.assertFalse(db_checker.isBottleOnShelf(bottle))
         db_checker.close()
+
+    def test_close(self):
+        # must be here, so all methods from Database are covered
+        pass
 
 
 class TestIngredients(unittest.TestCase):
