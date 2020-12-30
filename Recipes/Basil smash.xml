@@ -1,0 +1,9 @@
+<Recipe>
+    <Name>Basil smash</Name>
+    <Ingredients>
+        <Alcohol quantity="40" unit="ml">Gin</Alcohol>
+        <Filler quantity="20" unit="ml">Sok z cytryny</Filler>
+        <Filler quantity="10" unit="ml">Syrop cukrowy</Filler>
+        <Addon quantity="10" unit="szt">Liście bazylii</Addon>
+    </Ingredients>
+</Recipe>

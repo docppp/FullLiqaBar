@@ -1,0 +1,8 @@
+<Recipe>
+    <Name>White Russian</Name>
+    <Ingredients>
+        <Alcohol quantity="60" unit="ml">Wódka</Alcohol>
+        <Alcohol quantity="30" unit="ml">Likier kawowy</Alcohol>
+        <Filler quantity="30" unit="ml">Śmietanka</Filler>
+    </Ingredients>
+</Recipe>
