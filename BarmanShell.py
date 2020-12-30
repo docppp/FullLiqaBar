@@ -1,7 +1,8 @@
-import os, sqlite3
+import os
+import sqlite3
 from database import Database
 from databaseErr import DatabaseError
-from ingredients import Recipe
+from ingredients import Recipe, Alcohol, Filler, Addon
 
 
 # TODO:
@@ -93,6 +94,7 @@ class BarmanShell:
         except sqlite3.Error:
             print("ERROR: Cannot get bottles info.")
             return False
+        print(f"SUCCESS: Got bottles info: {bottles}")
         return bottles
 
 

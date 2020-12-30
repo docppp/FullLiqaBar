@@ -188,6 +188,16 @@ class TestRecipe(unittest.TestCase):
     fil = [ingredients.Filler("Tonic", 80)]
     add = [ingredients.Addon("Limonka", 0.5, "szt")]
 
+    def test_checkIfAllMethodsAreCovered(self):
+        test_members = list(TestRecipe.__dict__.keys())
+        class_members = list(ingredients.Recipe.__dict__.keys())
+        check_for = ['test_' + x for x in class_members if not x.startswith('_')]
+        are_covered = all(test in test_members for test in check_for)
+        if not are_covered:
+            diff = list(set(check_for)-set(test_members))
+            print("Recipe functions that are not covered: ", diff)
+            self.assertTrue(False)
+
     def test_listOfIngr(self):
         r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
         self.assertEqual(r.listOfIngr(), self.alc + self.fil + self.add)
