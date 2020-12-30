@@ -1,5 +1,4 @@
 from xml.etree import ElementTree
-from ingredientsErr import IngredientsError
 
 
 class Ingredient:
@@ -92,5 +91,5 @@ class RecipeParser:
             attr = {'quantity': str(ingr.qty), 'unit': ingr.unit}
             ElementTree.SubElement(ingredients, ingr.ingrType(), attr).text = ingr.name
         ElementTree.indent(root, space="    ")
-        return ElementTree.tostring(root, encoding='unicode')
+        return ElementTree.tostring(root, encoding='unicode') + "\n"
 

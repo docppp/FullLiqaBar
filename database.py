@@ -85,12 +85,22 @@ class Database(object):
         qty = self.cur.execute("SELECT QTY FROM SHELF WHERE NAME=?", (bottle_name,)).fetchone()
         return qty[0] if qty else 0
 
+    def getBottles(self):
+        return self.cur.execute("SELECT NAME, QTY FROM SHELF").fetchall()
+
     def addNewBottle(self, bottle_name, bottle_qty):
         if self.isBottleOnShelf(bottle_name):
-            qty = self.getBottleQty(bottle_name) + bottle_qty
-            self.cur.execute("UPDATE SHELF SET QTY=? WHERE NAME=?", (qty, bottle_name))
-        else:
-            self.cur.execute("INSERT INTO SHELF (NAME, QTY) VALUES (?, ?)", (bottle_name, bottle_qty))
+            err = f'Cannot add to database. Bottle with name {bottle_name} already exists.'
+            raise DatabaseError(err)
+        self.cur.execute("INSERT INTO SHELF (NAME, QTY) VALUES (?, ?)", (bottle_name, bottle_qty))
+        self.conn.commit()
+
+    def updateBottleQty(self, bottle_name, qty):
+        if not self.isBottleOnShelf(bottle_name):
+            err = f"Cannot update database. Bottle with name {bottle_name} does not exists."
+            raise DatabaseError(err)
+        bottle_qty = self.getBottleQty(bottle_name) + qty
+        self.cur.execute("UPDATE SHELF SET QTY=? WHERE NAME=?", (bottle_qty, bottle_name))
         self.conn.commit()
 
     def deleteBottle(self, bottle_name):

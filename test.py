@@ -88,6 +88,11 @@ class TestDatabase(unittest.TestCase):
         self.db.conn.commit()
         self.assertFalse(self.db.isBottleOnShelf(name))
 
+    def test_getBottles(self):
+        bottles = self.db.getBottles()
+        check = [('obviously-dummy-bottle', 500), ('obviously-dummy-bottle2', 700)]
+        self.assertEqual(bottles, check)
+
     def test_deleteRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
             self.db.deleteRecipe("obviously-non-existing-cocktail")
@@ -112,6 +117,20 @@ class TestDatabase(unittest.TestCase):
         self.assertTrue(self.db.isBottleOnShelf(name))
         self.db.deleteBottle(name)
         self.assertFalse(self.db.isBottleOnShelf(name))
+
+    def test_updateBottleQtyRaise(self):
+        with self.assertRaises(database.DatabaseError):
+            self.db.updateBottleQty("obviously-non-existing-bottle", 40)
+
+    def test_updateBottleQty(self):
+        name = 'obviously-dummy-bottle'
+        previous_qty = self.db.getBottleQty(name)
+        self.db.updateBottleQty(name, 40)
+        new_qty = self.db.getBottleQty(name)
+        self.assertEqual(previous_qty + 40, new_qty)
+        self.db.updateBottleQty(name, -100)
+        newest_qty = self.db.getBottleQty(name)
+        self.assertEqual(previous_qty + 40 - 100, newest_qty)
 
     def test_changesCommits(self):
         db_checker = database.Database(self.dummy)
@@ -162,7 +181,8 @@ class TestRecipe(unittest.TestCase):
         <Filler quantity="80" unit="ml">Tonic</Filler>
         <Addon quantity="0.5" unit="szt">Limonka</Addon>
     </Ingredients>
-</Recipe>"""
+</Recipe>
+"""
     name = "Gin and Tonic"
     alc = [ingredients.Alcohol("Gin", 20), ingredients.Alcohol("Gin2", 50)]
     fil = [ingredients.Filler("Tonic", 80)]
