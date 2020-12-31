@@ -1,27 +1,10 @@
-import os
-import sqlite3
-from database import Database
-from databaseErr import DatabaseError
-from ingredients import Recipe, Alcohol, Filler, Addon
+from sqlite3 import InterfaceError
+from xml.etree.ElementTree import ParseError
+from database import Database, DatabaseError
+from ingredients import Recipe
 
 
 # TODO:
-# addNewRecipe(recipe)
-#   adds recipe as list of ingredients to db
-#   return nothing
-#
-# addBottleToShelf(name, qty)
-#   name is alcohol name
-#   qty is bottle quantity
-#   adds qty to proper row in shelf db
-#   return nothing
-#
-# getShelf()
-#     return list of pair alcohol, qty
-#
-# getRecipes()
-#     return list of all recipes
-#
 # getRecipeByIngr(ingr_name)
 #     return all recipes when ingr_name appears
 #
@@ -36,14 +19,19 @@ from ingredients import Recipe, Alcohol, Filler, Addon
 class BarmanShell:
 
     def __init__(self):
+        print("Initializing with existing recipes.")
         self.db = Database()
+        recipes = getRecipesFromAllFiles()
+        for recipe in recipes:
+            r = recipe["recipe"]
+            f = recipe["file"]
+            try:
+                self.db.addNewRecipe(r.name, f, ",".join(r.listOfIngrNames()))
+            except DatabaseError:
+                continue
 
     def addNewRecipe(self, recipe_name, list_of_ingr):
-        print(f"Adding new recipe {recipe_name} to database.")
-
-        if self.db.isRecipeNameExists(recipe_name):
-            print(f"WARNING: Cocktail {recipe_name} already exists in database.")
-            return False
+        print(f"Adding recipe {recipe_name} to database.")
 
         alcohols = [x for x in list_of_ingr if x.ingrType == 'Alcohol']
         fillers = [x for x in list_of_ingr if x.ingrType == 'Filler']
@@ -57,46 +45,120 @@ class BarmanShell:
             print("ERROR: Cannot convert to recipe.")
             return False
 
-        try:
-            file_path = os.path.join("Recipes", recipe_name + ".xml")
-            f = open(file_path, "x")
-            f.write(xml_string)
-            f.close()
-        except FileExistsError:
-            print("ERROR: Cannot create new recipe file.")
-            return False
+        file_path = writeRecipeToFile(recipe_name, xml_string)
 
         try:
             self.db.addNewRecipe(recipe_name, file_path, ingr)
-        except DatabaseError:
-            print("ERROR: Cannot add recipe to database.")
-            print("Removing newly added recipe file.")
-            os.remove(file_path)
+        except InterfaceError:
+            return False
+        except DatabaseError as e:
+            print(e.message)
             return False
 
         print(f"SUCCESS: Recipe {recipe_name} added to database.")
+        return True
+
+    def addNewRecipeFromXml(self, xml_string):
+        print("Adding new recipe from xml to database.")
+
+        try:
+            recipe = Recipe.fromXmlString(xml_string)
+        except (TypeError, AttributeError, ParseError):
+            print("ERROR: Cannot convert xml to recipe.")
+            return False
+
+        success = self.addNewRecipe(recipe.name, recipe.listOfIngr())
+
+        if not success:
+            print("ERROR: Could not add recipe from xml.")
+            return False
+
+        print("SUCCESS: Recipe added from xml to database.")
         return True
 
     def addBottleToShelf(self, bottle_name, bottle_qty):
         print(f"Adding new bottle {bottle_name} to database.")
         try:
             self.db.addNewBottle(bottle_name, bottle_qty)
-        except DatabaseError:
-            print("ERROR: Cannot add bottle to database.")
+        except DatabaseError as e:
+            print(e.message)
             return False
         print(f"SUCCESS: Bottle {bottle_name} added to database.")
+        return True
+
+    def changeBottleByQty(self, bottle_name, qty):
+        print(f"Changing qty of {bottle_name} by {qty}.")
+        try:
+            self.db.updateBottleQty(bottle_name, qty)
+        except DatabaseError as e:
+            print(e.message)
+            return False
+        if self.db.getBottleQty(bottle_name) <= 0:
+            print("Bottle qty drop to zero. Removing from shelf.")
+            self.db.deleteBottle(bottle_name)
         return True
 
     def getShelf(self):
         print("Getting bottles info.")
         try:
             bottles = self.db.getBottles()
-        except sqlite3.Error:
+        except InterfaceError:
             print("ERROR: Cannot get bottles info.")
             return False
         print(f"SUCCESS: Got bottles info: {bottles}")
         return bottles
 
+    def getRecipes(self):
+        print("Getting recipes info.")
+        try:
+            recipes = self.db.getRecipes()
+        except InterfaceError:
+            print("ERROR: Cannot get recipes info.")
+            return False
+        print(f"SUCCESS: Got recipes info.")
+        return recipes
 
 
+def writeRecipeToFile(recipe_name, xml_string):
+    from os import path
+    file_path = path.join("Recipes", recipe_name + ".xml")
+    try:
+        f = open(file_path, "x")
+        f.write(xml_string)
+        f.close()
+    except FileExistsError:
+        print("WARNING: File already exists.")
+        print("Checking if file content is the same.")
+        f = open(file_path, "r")
+        file_content = f.read()
+        f.close()
+        if file_content != xml_string:
+            print("ERROR: File content is different.")
+            return False
+        print("File content is valid.")
+    return file_path
 
+
+def getRecipesFromAllFiles():
+    from os import path, listdir
+    recipes = []
+    files = [path.join("Recipes", f) for f in listdir("Recipes")]
+    print(f"Found {len(files)} files.")
+
+    for file in files:
+        f = open(file, "r")
+        content = f.read()
+        f.close()
+        try:
+            recipes.append({"recipe": Recipe.fromXmlString(content),
+                           "file": file})
+        except (TypeError, AttributeError, ParseError):
+            print(f"ERROR: Cannot convert {file} to recipe. Continuing.")
+
+    print(f"Got {len(recipes)} valid recipes.")
+    return recipes
+
+
+b = BarmanShell()
+print(b.getRecipes())
+print(b.getShelf())

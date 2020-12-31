@@ -44,6 +44,9 @@ class Recipe:
         self.fillers = fillers
         self.addons = addons
 
+    def __repr__(self):
+        return f"('{self.name}' {self.listOfIngrNames()})"
+
     @classmethod
     def fromXmlString(cls, xml_string):
         return RecipeParser.fromString(xml_string)

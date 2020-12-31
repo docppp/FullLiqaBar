@@ -1,7 +1,5 @@
-import sqlite3
 import unittest
 import database
-import os
 import ingredients
 
 
@@ -23,11 +21,12 @@ class TestDatabase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        from os import remove
         cls.db.cur.execute("DELETE FROM RECIPES;")
         cls.db.cur.execute("DELETE FROM SHELF;")
         cls.db.conn.commit()
         cls.db.close()
-        os.remove("liquorBar" + cls.dummy + ".db")
+        remove("liquorBar" + cls.dummy + ".db")
 
     def test_checkIfAllMethodsAreCovered(self):
         test_members = list(TestDatabase.__dict__.keys())
@@ -62,6 +61,10 @@ class TestDatabase(unittest.TestCase):
         qty_none = self.db.getBottleQty("obviously-non-existing-bottle")
         self.assertEqual(qty_none, 0)
         self.assertEqual(qty, 500)
+
+    def test_getRecipes(self):
+        recipes = self.db.getRecipes()
+        self.assertEqual(recipes, [('obviously-dummy-cocktail', None)])
 
     def test_addNewRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
@@ -215,9 +218,6 @@ class TestRecipe(unittest.TestCase):
     def test_toXmlString(self):
         r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
         self.assertEqual(r.toXmlString(), self.xml_string)
-
-
-
 
 
 if __name__ == '__main__':

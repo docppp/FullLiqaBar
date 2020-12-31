@@ -1,5 +1,4 @@
 import sqlite3
-from databaseErr import DatabaseError
 
 
 class Database(object):
@@ -51,6 +50,9 @@ class Database(object):
     def getRecipePath(self, cocktail_name):
         path = self.cur.execute("SELECT PATH FROM RECIPES WHERE NAME=?", (cocktail_name,)).fetchone()
         return path[0] if path else None
+
+    def getRecipes(self):
+        return self.cur.execute("SELECT NAME, INGR FROM RECIPES").fetchall()
 
     def addNewRecipe(self, cocktail_name, cocktail_path, cocktail_ingr=None):
         if self.isRecipeNameExists(cocktail_name):
@@ -109,3 +111,17 @@ class Database(object):
             raise DatabaseError(err)
         self.cur.execute("DELETE FROM SHELF WHERE NAME=?;", (bottle_name,))
         self.conn.commit()
+
+
+class DatabaseError(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return f'DatabaseError, {self.message}'
+        else:
+            return f'DatabaseError has ben raised.'
