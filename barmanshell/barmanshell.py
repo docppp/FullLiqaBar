@@ -1,7 +1,7 @@
 from sqlite3 import InterfaceError
 from xml.etree.ElementTree import ParseError
-from barmanshell.database import Database, DatabaseError
-from barmanshell.ingredients import Recipe
+from .database import Database, DatabaseError
+from .ingredients import Recipe
 from os import path
 
 # TODO:
@@ -160,5 +160,6 @@ def getRecipesFromAllFiles():
     return recipes
 
 
-b = BarmanShell()
-print(b.getRecipes())
+# b = BarmanShell(db_path="db.sqlite3")
+# print(b.getRecipes())
+# b.getShelf()
