@@ -4,13 +4,13 @@ import sqlite3
 class Database(object):
     __DB_NAME = "liquorBar.db"
 
-    def __init__(self, dummy=None):
-        if dummy:
-            self.__DB_NAME = "liquorBar" + dummy + ".db"
+    def __init__(self, path="liquorBar.db", new=False, dummy=False):
+        self.__DB_NAME = path if not dummy else path + "_dummy"
         self.conn = sqlite3.connect(self.__DB_NAME)
         self.cur = self.conn.cursor()
-        self.__createTableRecipes()
-        self.__createTableShelf()
+        if new:
+            self.__createTableRecipes()
+            self.__createTableShelf()
 
     def __del__(self):
         self.conn.close()

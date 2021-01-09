@@ -1,8 +1,8 @@
 from sqlite3 import InterfaceError
 from xml.etree.ElementTree import ParseError
-from database import Database, DatabaseError
-from ingredients import Recipe
-
+from barmanshell.database import Database, DatabaseError
+from barmanshell.ingredients import Recipe
+from os import path
 
 # TODO:
 # getRecipeByIngr(ingr_name)
@@ -18,17 +18,18 @@ from ingredients import Recipe
 
 class BarmanShell:
 
-    def __init__(self):
-        print("Initializing with existing recipes.")
-        self.db = Database()
-        recipes = getRecipesFromAllFiles()
-        for recipe in recipes:
-            r = recipe["recipe"]
-            f = recipe["file"]
-            try:
-                self.db.addNewRecipe(r.name, f, ",".join(r.listOfIngrNames()))
-            except DatabaseError:
-                continue
+    def __init__(self, db_path=path.join(".", "liquorBar.db"), new=False):
+        print(f"Initializing BarmanShell with database located at {db_path}.")
+        self.db = Database(path=db_path, new=new)
+        if new:
+            recipes = getRecipesFromAllFiles()
+            for recipe in recipes:
+                r = recipe["recipe"]
+                f = recipe["file"]
+                try:
+                    self.db.addNewRecipe(r.name, f, ",".join(r.listOfIngrNames()))
+                except DatabaseError:
+                    continue
 
     def addNewRecipe(self, recipe_name, list_of_ingr):
         print(f"Adding recipe {recipe_name} to database.")
@@ -121,7 +122,7 @@ class BarmanShell:
 
 def writeRecipeToFile(recipe_name, xml_string):
     from os import path
-    file_path = path.join("Recipes", recipe_name + ".xml")
+    file_path = path.join("recipes", recipe_name + ".xml")
     try:
         f = open(file_path, "x")
         f.write(xml_string)
@@ -142,8 +143,8 @@ def writeRecipeToFile(recipe_name, xml_string):
 def getRecipesFromAllFiles():
     from os import path, listdir
     recipes = []
-    files = [path.join("Recipes", f) for f in listdir("Recipes")]
-    print(f"Found {len(files)} files.")
+    files = [path.join("recipes", f) for f in listdir("recipes")]
+    print(f"Found {len(files)} recipe files.")
 
     for file in files:
         f = open(file, "r")
@@ -161,4 +162,3 @@ def getRecipesFromAllFiles():
 
 b = BarmanShell()
 print(b.getRecipes())
-print(b.getShelf())
