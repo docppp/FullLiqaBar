@@ -6,11 +6,10 @@ import ingredients
 class TestDatabase(unittest.TestCase):
 
     db = None
-    dummy = 'Dummy'
 
     @classmethod
     def setUpClass(cls):
-        cls.db = database.Database(cls.dummy)
+        cls.db = database.Database(dummy=True)
         cls.db.cur.execute("INSERT INTO RECIPES (NAME, PATH) \
                            VALUES ('obviously-dummy-cocktail', 'obviously-dummy-path');")
         cls.db.cur.execute("INSERT INTO SHELF (NAME, QTY) \
@@ -26,7 +25,7 @@ class TestDatabase(unittest.TestCase):
         cls.db.cur.execute("DELETE FROM SHELF;")
         cls.db.conn.commit()
         cls.db.close()
-        remove("liquorBar" + cls.dummy + ".db")
+        remove(database.Database._Database__DB_NAME + "_dummy")
 
     def test_checkIfAllMethodsAreCovered(self):
         test_members = list(TestDatabase.__dict__.keys())
@@ -136,7 +135,7 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(previous_qty + 40 - 100, newest_qty)
 
     def test_changesCommits(self):
-        db_checker = database.Database(self.dummy)
+        db_checker = database.Database(dummy=True)
         name = "obviously-almost-existing-cocktail"
         path = "obviously-almost-existing-path"
         bottle = "obviously-almost-existing-bottle"
