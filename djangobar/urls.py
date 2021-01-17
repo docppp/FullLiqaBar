@@ -28,7 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view),
     path('myshelf/', myshelf_view, kwargs={'barman': barman}),
-    path('recipes/', recipe_view),
+    path('recipes/', recipe_view, kwargs={'barman': barman}),
     url(r'^favicon\.ico$', RedirectView.as_view(url='favicon.ico')),
 ]
 
