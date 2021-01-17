@@ -96,3 +96,31 @@ class RecipeParser:
         ElementTree.indent(root, space="    ")
         return ElementTree.tostring(root, encoding='unicode') + "\n"
 
+    @classmethod
+    def toHtmlString(cls, recipe):
+        html = '<p><strong>' + recipe.name + '</strong></p>'
+        html += '<table style="width: 100%;"><tr>'
+
+        html += '<td style="width: 33.3333%; vertical-align: top;"> Alcohols <ul>'
+        for ingr in recipe.alcohols:
+            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+        if not recipe.alcohols:
+            html += "------"
+        html += '</ul></td>'
+
+        html += '<td style="width: 33.3333%; vertical-align: top;"> Fillers <ul>'
+        for ingr in recipe.fillers:
+            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+        if not recipe.fillers:
+            html += "------"
+        html += '</ul></td>'
+
+        html += '<td style="width: 33.3333%; vertical-align: top;"> Addons <ul>'
+        for ingr in recipe.addons:
+            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+        if not recipe.addons:
+            html += "------"
+        html += '</ul></td>'
+
+        html += '</tr></table>'
+        return html
