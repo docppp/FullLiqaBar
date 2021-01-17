@@ -23,7 +23,10 @@ class Database(object):
             self.__createTableShelf()
 
     def __del__(self):
-        self.conn.close()
+        try:
+            self.conn.close()
+        except Exception:
+            pass
 
     def __createTableShelf(self):
         self.cur.execute('''CREATE TABLE IF NOT EXISTS SHELF

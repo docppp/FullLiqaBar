@@ -1,3 +1,10 @@
 from django.db import models
 
-# Create your models here.
+
+class Shelf(models.Model):
+
+    name = models.CharField(max_length=30)
+    qty = models.IntegerField()
+
+    class Meta:
+        db_table = "SHELF"

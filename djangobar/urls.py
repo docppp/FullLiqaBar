@@ -17,11 +17,19 @@ from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView
 from django.conf.urls import url
+from django.db import connection
+from barmanshell.barmanshell import BarmanShell
 from myshelf.views import myshelf_view, home_view
+from recipe.views import recipe_view
+
+barman = BarmanShell.djangoParams(connection)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view),
-    path('myshelf/', myshelf_view),
+    path('myshelf/', myshelf_view, kwargs={'barman': barman}),
+    path('recipes/', recipe_view),
     url(r'^favicon\.ico$', RedirectView.as_view(url='favicon.ico')),
 ]
+
+
