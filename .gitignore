@@ -1,3 +1,7 @@
 .idea
-liquorBar.db
 __pycache__
+db.sqlite3
+myshelf/migrations/*
+!myshelf/migrations/__init__.py
+recipe/migrations/*
+!recipe/migrations/__init__.py
