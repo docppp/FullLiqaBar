@@ -119,7 +119,7 @@ def writeRecipeToFile(recipe_name, xml_string):
     except FileExistsError:
         print("WARNING: File already exists.")
         print("Checking if file content is the same.")
-        f = open(file_path, "r")
+        f = open(file_path, "r", encoding="utf-8")
         file_content = f.read()
         f.close()
         if file_content != xml_string:
@@ -136,7 +136,7 @@ def getRecipesFromAllFiles():
     print(f"Found {len(files)} recipe files.")
 
     for file in files:
-        f = open(file, "r")
+        f = open(file, "r", encoding="utf-8")
         content = f.read()
         f.close()
         try:
