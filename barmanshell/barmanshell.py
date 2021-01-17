@@ -18,9 +18,14 @@ from os import path
 
 class BarmanShell:
 
-    def __init__(self, db_path=path.join(".", "liquorBar.db"), new=False):
+    @classmethod
+    def djangoParams(cls, conn):
+        return cls(db_path="db.sqlite3", conn=conn, placeholder="%s", new=True)
+
+    def __init__(self, db_path=path.join(".", "liquorBar.db"),
+                 conn=None, placeholder='?', new=False):
         print(f"Initializing BarmanShell with database located at {db_path}.")
-        self.db = Database(path=db_path, new=new)
+        self.db = Database(path=db_path, conn=conn, placeholder=placeholder, new=new)
         if new:
             recipes = getRecipesFromAllFiles()
             for recipe in recipes:
@@ -30,6 +35,9 @@ class BarmanShell:
                     self.db.addNewRecipe(r.name, f, ",".join(r.listOfIngrNames()))
                 except DatabaseError:
                     continue
+        bottles = len(self.db.getBottles())
+        recipes = len(self.db.getRecipes())
+        print(f"BarmanShell initialized with {bottles} bottles and {recipes} recipes.")
 
     def addNewRecipe(self, recipe_name, list_of_ingr):
         print(f"Adding recipe {recipe_name} to database.")
@@ -57,24 +65,6 @@ class BarmanShell:
             return False
 
         print(f"SUCCESS: Recipe {recipe_name} added to database.")
-        return True
-
-    def addNewRecipeFromXml(self, xml_string):
-        print("Adding new recipe from xml to database.")
-
-        try:
-            recipe = Recipe.fromXmlString(xml_string)
-        except (TypeError, AttributeError, ParseError):
-            print("ERROR: Cannot convert xml to recipe.")
-            return False
-
-        success = self.addNewRecipe(recipe.name, recipe.listOfIngr())
-
-        if not success:
-            print("ERROR: Could not add recipe from xml.")
-            return False
-
-        print("SUCCESS: Recipe added from xml to database.")
         return True
 
     def addBottleToShelf(self, bottle_name, bottle_qty):
@@ -121,7 +111,6 @@ class BarmanShell:
 
 
 def writeRecipeToFile(recipe_name, xml_string):
-    from os import path
     file_path = path.join("recipes", recipe_name + ".xml")
     try:
         f = open(file_path, "x")
@@ -141,7 +130,7 @@ def writeRecipeToFile(recipe_name, xml_string):
 
 
 def getRecipesFromAllFiles():
-    from os import path, listdir
+    from os import listdir
     recipes = []
     files = [path.join("recipes", f) for f in listdir("recipes")]
     print(f"Found {len(files)} recipe files.")
@@ -161,5 +150,6 @@ def getRecipesFromAllFiles():
 
 
 # b = BarmanShell(db_path="db.sqlite3")
+# b.addBottleToShelf("Whisky", 500)
 # print(b.getRecipes())
 # b.getShelf()

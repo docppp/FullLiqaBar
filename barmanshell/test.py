@@ -9,7 +9,7 @@ class TestDatabase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.db = database.Database(dummy=True)
+        cls.db = database.Database(new=True, dummy=True)
         cls.db.cur.execute("INSERT INTO RECIPES (NAME, PATH) \
                            VALUES ('obviously-dummy-cocktail', 'obviously-dummy-path');")
         cls.db.cur.execute("INSERT INTO SHELF (NAME, QTY) \
@@ -63,7 +63,7 @@ class TestDatabase(unittest.TestCase):
 
     def test_getRecipes(self):
         recipes = self.db.getRecipes()
-        self.assertEqual(recipes, [('obviously-dummy-cocktail', None)])
+        self.assertEqual(recipes, [('obviously-dummy-cocktail', None, 'obviously-dummy-path')])
 
     def test_addNewRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):

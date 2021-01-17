@@ -4,10 +4,20 @@ import sqlite3
 class Database(object):
     __DB_NAME = "liquorBar.db"
 
-    def __init__(self, path="liquorBar.db", new=False, dummy=False):
+    def __init__(self, path="liquorBar.db",
+                 conn=None, placeholder='?',
+                 new=False, dummy=False):
+        """
+        :param path: physical location of database
+        :param conn: override default sqlite3 connection if not None
+        :param placeholder: symbol used for safe parameter substitution
+        :param new: create recipes and shelf tables if new is True
+        :param dummy: add dummy tag to db name for testing purposes if dummy is True
+        """
         self.__DB_NAME = path if not dummy else path + "_dummy"
-        self.conn = sqlite3.connect(self.__DB_NAME)
+        self.conn = conn if conn is not None else sqlite3.connect(self.__DB_NAME)
         self.cur = self.conn.cursor()
+        self.ph = placeholder
         if new:
             self.__createTableRecipes()
             self.__createTableShelf()
@@ -40,19 +50,22 @@ class Database(object):
     #
 
     def isRecipeNameExists(self, cocktail_name):
-        name = self.cur.execute("SELECT NAME FROM RECIPES WHERE NAME=?", (cocktail_name,))
+        query = f"SELECT NAME FROM RECIPES WHERE NAME={self.ph}"
+        name = self.cur.execute(query, (cocktail_name,))
         return True if name.fetchone() else None
 
     def isRecipePathExists(self, cocktail_path):
-        path = self.cur.execute(f"SELECT PATH FROM RECIPES WHERE PATH=?", (cocktail_path,))
+        query = f"SELECT PATH FROM RECIPES WHERE PATH={self.ph}"
+        path = self.cur.execute(query, (cocktail_path,))
         return True if path.fetchone() else None
 
     def getRecipePath(self, cocktail_name):
-        path = self.cur.execute("SELECT PATH FROM RECIPES WHERE NAME=?", (cocktail_name,)).fetchone()
+        query = f"SELECT PATH FROM RECIPES WHERE NAME={self.ph}"
+        path = self.cur.execute(query, (cocktail_name,)).fetchone()
         return path[0] if path else None
 
     def getRecipes(self):
-        return self.cur.execute("SELECT NAME, INGR FROM RECIPES").fetchall()
+        return self.cur.execute("SELECT NAME, INGR, PATH FROM RECIPES").fetchall()
 
     def addNewRecipe(self, cocktail_name, cocktail_path, cocktail_ingr=None):
         if self.isRecipeNameExists(cocktail_name):
@@ -62,17 +75,19 @@ class Database(object):
             err = f'Cannot add to database. Cocktail with path {cocktail_path} already exists.'
             raise DatabaseError(err)
         if not cocktail_ingr:
-            self.cur.execute("INSERT INTO RECIPES (NAME,PATH) VALUES (?, ?)", (cocktail_name, cocktail_path))
+            query = f"INSERT INTO RECIPES (NAME,PATH) VALUES ({self.ph}, {self.ph})"
+            self.cur.execute(query, (cocktail_name, cocktail_path))
         else:
-            self.cur.execute("INSERT INTO RECIPES (NAME,PATH,INGR) VALUES (?, ?, ?)",
-                             (cocktail_name, cocktail_path, cocktail_ingr))
+            query = f"INSERT INTO RECIPES (NAME,PATH,INGR) VALUES ({self.ph}, {self.ph}, {self.ph})"
+            self.cur.execute(query, (cocktail_name, cocktail_path, cocktail_ingr))
         self.conn.commit()
 
     def deleteRecipe(self, cocktail_name):
         if not self.isRecipeNameExists(cocktail_name):
             err = f"Cannot remove from database. Cocktail with name {cocktail_name} does not exists."
             raise DatabaseError(err)
-        self.cur.execute("DELETE FROM RECIPES WHERE NAME=?;", (cocktail_name,))
+        query = f"DELETE FROM RECIPES WHERE NAME={self.ph}"
+        self.cur.execute(query, (cocktail_name,))
         self.conn.commit()
 
     #
@@ -80,11 +95,13 @@ class Database(object):
     #
 
     def isBottleOnShelf(self, bottle_name):
-        name = self.cur.execute("SELECT NAME FROM SHELF WHERE NAME=?", (bottle_name,))
+        query = f"SELECT NAME FROM SHELF WHERE NAME={self.ph}"
+        name = self.cur.execute(query, (bottle_name,))
         return True if name.fetchone() else None
 
     def getBottleQty(self, bottle_name):
-        qty = self.cur.execute("SELECT QTY FROM SHELF WHERE NAME=?", (bottle_name,)).fetchone()
+        query = f"SELECT QTY FROM SHELF WHERE NAME={self.ph}"
+        qty = self.cur.execute(query, (bottle_name,)).fetchone()
         return qty[0] if qty else 0
 
     def getBottles(self):
@@ -94,7 +111,8 @@ class Database(object):
         if self.isBottleOnShelf(bottle_name):
             err = f'Cannot add to database. Bottle with name {bottle_name} already exists.'
             raise DatabaseError(err)
-        self.cur.execute("INSERT INTO SHELF (NAME, QTY) VALUES (?, ?)", (bottle_name, bottle_qty))
+        query = f"INSERT INTO SHELF (NAME, QTY) VALUES ({self.ph}, {self.ph})"
+        self.cur.execute(query, (bottle_name, bottle_qty))
         self.conn.commit()
 
     def updateBottleQty(self, bottle_name, qty):
@@ -102,14 +120,16 @@ class Database(object):
             err = f"Cannot update database. Bottle with name {bottle_name} does not exists."
             raise DatabaseError(err)
         bottle_qty = self.getBottleQty(bottle_name) + qty
-        self.cur.execute("UPDATE SHELF SET QTY=? WHERE NAME=?", (bottle_qty, bottle_name))
+        query = f"UPDATE SHELF SET QTY=? WHERE NAME={self.ph}"
+        self.cur.execute(query, (bottle_qty, bottle_name))
         self.conn.commit()
 
     def deleteBottle(self, bottle_name):
         if not self.isBottleOnShelf(bottle_name):
             err = f"Cannot remove from database. Shelf does not contains {bottle_name}."
             raise DatabaseError(err)
-        self.cur.execute("DELETE FROM SHELF WHERE NAME=?;", (bottle_name,))
+        query = f"DELETE FROM SHELF WHERE NAME={self.ph}"
+        self.cur.execute(query, (bottle_name,))
         self.conn.commit()
 
 
