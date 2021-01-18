@@ -20,7 +20,7 @@ from django.conf.urls import url
 from django.db import connection
 from barmanshell.barmanshell import BarmanShell
 from myshelf.views import myshelf_view, home_view
-from recipe.views import recipe_view
+from recipe.views import recipe_view, recipe_detail_view
 
 barman = BarmanShell.djangoParams(connection)
 
@@ -29,6 +29,7 @@ urlpatterns = [
     path('', home_view),
     path('myshelf/', myshelf_view, kwargs={'barman': barman}),
     path('recipes/', recipe_view, kwargs={'barman': barman}),
+    path('recipes/<int:recipe_id>/', recipe_detail_view, kwargs={'barman': barman}),
     url(r'^favicon\.ico$', RedirectView.as_view(url='favicon.ico')),
 ]
 
