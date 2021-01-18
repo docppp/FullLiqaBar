@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from barmanshell.barmanshell import BarmanCopy
 from math import ceil
 
 
@@ -9,7 +10,7 @@ def home_view(request, *args, **kwargs):
 
 def myshelf_view(request, *args, **kwargs):
     if request.method == "GET":
-        barman = kwargs.get('barman')
+        barman = BarmanCopy.useBarman(kwargs.get('barman'))
         shelf = barman.getShelf()
         list_of_three = []
         for i in range(ceil(len(shelf)/3)):
