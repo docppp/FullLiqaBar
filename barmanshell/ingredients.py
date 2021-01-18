@@ -49,10 +49,13 @@ class Recipe:
 
     @classmethod
     def fromXmlString(cls, xml_string):
-        return RecipeParser.fromString(xml_string)
+        return RecipeParser.fromXmlString(xml_string)
     
     def toXmlString(self):
-        return RecipeParser.toString(self)
+        return RecipeParser.toXmlString(self)
+
+    def toHtmlString(self):
+        return RecipeParser.toHtmlString(self)
 
     def listOfIngr(self):
         ingr = self.alcohols + self.fillers + self.addons
@@ -68,7 +71,7 @@ class Recipe:
 class RecipeParser:
 
     @classmethod
-    def fromString(cls, xml_string):
+    def fromXmlString(cls, xml_string):
         root = ElementTree.fromstring(xml_string)
         name = root.find('Name').text
         ingredients = root.find('Ingredients')
@@ -85,7 +88,7 @@ class RecipeParser:
         return Recipe(name, alcohols, fillers, addons)
 
     @classmethod
-    def toString(cls, recipe):
+    def toXmlString(cls, recipe):
         root = ElementTree.Element('Recipe')
         name = ElementTree.SubElement(root, 'Name')
         name.text = recipe.name
@@ -98,29 +101,29 @@ class RecipeParser:
 
     @classmethod
     def toHtmlString(cls, recipe):
-        html = '<p><strong>' + recipe.name + '</strong></p>'
-        html += '<table style="width: 100%;"><tr>'
+        html = '<strong>' + recipe.name + '</strong>\n'
+        html += '<table style="width: 100%;"><tr>\n'
 
-        html += '<td style="width: 33.3333%; vertical-align: top;"> Alcohols <ul>'
+        html += '\t<td style="width: 33.3333%; vertical-align: top;"> Alkohole <ul>\n'
         for ingr in recipe.alcohols:
-            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+            html += f'\t\t<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>\n'
         if not recipe.alcohols:
-            html += "------"
-        html += '</ul></td>'
+            html += "\t\t------\n"
+        html += '\t</ul></td>\n'
 
-        html += '<td style="width: 33.3333%; vertical-align: top;"> Fillers <ul>'
+        html += '\t<td style="width: 33.3333%; vertical-align: top;"> Wypełniacze <ul>\n'
         for ingr in recipe.fillers:
-            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+            html += f'\t\t<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>\n'
         if not recipe.fillers:
-            html += "------"
-        html += '</ul></td>'
+            html += "\t\t------\n"
+        html += '\t</ul></td>\n'
 
-        html += '<td style="width: 33.3333%; vertical-align: top;"> Addons <ul>'
+        html += '\t<td style="width: 33.3333%; vertical-align: top;"> Dodatki <ul>\n'
         for ingr in recipe.addons:
-            html += f'<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>'
+            html += f'\t\t<li>{ingr.name}: {ingr.qty} {ingr.unit}</li>\n'
         if not recipe.addons:
-            html += "------"
-        html += '</ul></td>'
+            html += "\t\t------\n"
+        html += '\t</ul></td>\n'
 
-        html += '</tr></table>'
+        html += '</tr></table>\n'
         return html

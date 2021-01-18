@@ -33,7 +33,7 @@ class Database(object):
                         (ID   INTEGER,
                          NAME TEXT     NOT NULL,
                          QTY  INTEGER  NOT NULL,
-                         PRIMARY KEY(ID, NAME));''')
+                         PRIMARY KEY(ID));''')
         self.conn.commit()
 
     def __createTableRecipes(self):
@@ -42,7 +42,7 @@ class Database(object):
                          NAME TEXT     NOT NULL,
                          PATH TEXT     NOT NULL,
                          INGR TEXT,
-                         PRIMARY KEY(ID, NAME, PATH));''')
+                         PRIMARY KEY(ID));''')
         self.conn.commit()
 
     def close(self):
@@ -68,7 +68,7 @@ class Database(object):
         return path[0] if path else None
 
     def getRecipes(self):
-        return self.cur.execute("SELECT NAME, INGR, PATH FROM RECIPES").fetchall()
+        return self.cur.execute("SELECT ID, NAME, INGR, PATH FROM RECIPES").fetchall()
 
     def addNewRecipe(self, cocktail_name, cocktail_path, cocktail_ingr=None):
         if self.isRecipeNameExists(cocktail_name):

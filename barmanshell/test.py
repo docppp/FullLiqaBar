@@ -63,7 +63,7 @@ class TestDatabase(unittest.TestCase):
 
     def test_getRecipes(self):
         recipes = self.db.getRecipes()
-        self.assertEqual(recipes, [('obviously-dummy-cocktail', None, 'obviously-dummy-path')])
+        self.assertEqual(recipes, [(1, 'obviously-dummy-cocktail', None, 'obviously-dummy-path')])
 
     def test_addNewRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
@@ -185,6 +185,20 @@ class TestRecipe(unittest.TestCase):
     </Ingredients>
 </Recipe>
 """
+    html_string = """<p><strong>Gin and Tonic</strong></p>
+<table style="width: 100%;"><tr>
+\t<td style="width: 33.3333%; vertical-align: top;"> Alkohole <ul>
+\t\t<li>Gin: 20 ml</li>
+\t\t<li>Gin2: 50 ml</li>
+\t</ul></td>
+\t<td style="width: 33.3333%; vertical-align: top;"> Wypełniacze <ul>
+\t\t<li>Tonic: 80 ml</li>
+\t</ul></td>
+\t<td style="width: 33.3333%; vertical-align: top;"> Dodatki <ul>
+\t\t<li>Limonka: 0.5 szt</li>
+\t</ul></td>
+</tr></table>
+"""
     name = "Gin and Tonic"
     alc = [ingredients.Alcohol("Gin", 20), ingredients.Alcohol("Gin2", 50)]
     fil = [ingredients.Filler("Tonic", 80)]
@@ -217,6 +231,10 @@ class TestRecipe(unittest.TestCase):
     def test_toXmlString(self):
         r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
         self.assertEqual(r.toXmlString(), self.xml_string)
+
+    def test_toHtmlString(self):
+        r = ingredients.Recipe(self.name, self.alc, self.fil, self.add)
+        self.assertEqual(r.toHtmlString(), self.html_string)
 
 
 if __name__ == '__main__':
