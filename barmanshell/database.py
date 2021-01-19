@@ -70,6 +70,10 @@ class Database(object):
     def getRecipes(self):
         return self.cur.execute("SELECT ID, NAME, INGR, PATH FROM RECIPES").fetchall()
 
+    def getRecipeById(self, recipe_id):
+        query = f"SELECT ID, NAME, INGR, PATH FROM RECIPES WHERE ID={self.ph}"
+        return self.cur.execute(query, (recipe_id,)).fetchone()
+
     def addNewRecipe(self, cocktail_name, cocktail_path, cocktail_ingr=None):
         if self.isRecipeNameExists(cocktail_name):
             err = f'Cannot add to database. Cocktail with name {cocktail_name} already exists.'

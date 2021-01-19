@@ -65,6 +65,10 @@ class TestDatabase(unittest.TestCase):
         recipes = self.db.getRecipes()
         self.assertEqual(recipes, [(1, 'obviously-dummy-cocktail', None, 'obviously-dummy-path')])
 
+    def test_getRecipeById(self):
+        recipe = self.db.getRecipeById(1)
+        self.assertEqual(recipe, (1, 'obviously-dummy-cocktail', None, 'obviously-dummy-path'))
+
     def test_addNewRecipeRaise(self):
         with self.assertRaises(database.DatabaseError):
             self.db.addNewRecipe("obviously-non-existing-cocktail", "obviously-dummy-path")
@@ -185,7 +189,7 @@ class TestRecipe(unittest.TestCase):
     </Ingredients>
 </Recipe>
 """
-    html_string = """<p><strong>Gin and Tonic</strong></p>
+    html_string = """<strong>Gin and Tonic</strong>
 <table style="width: 100%;"><tr>
 \t<td style="width: 33.3333%; vertical-align: top;"> Alkohole <ul>
 \t\t<li>Gin: 20 ml</li>
