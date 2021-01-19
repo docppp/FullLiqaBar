@@ -39,8 +39,8 @@ class BarmanShell:
         print(f"Initializing BarmanShell with database located at {db_path}.")
         self.db = Database(path=db_path, conn=conn, placeholder=placeholder, new=new)
         if new:
-            recipes = self.getRecipesFromAllFiles()
-            for recipe in recipes:
+            self.recipes = self.getRecipesFromAllFiles()
+            for recipe in self.recipes:
                 r = recipe["recipe"]
                 f = recipe["file"]
                 try:
