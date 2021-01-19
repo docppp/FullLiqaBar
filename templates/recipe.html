@@ -10,12 +10,11 @@
         &nbsp;
     </td>
     <td style="width: 75%;">
-        <a href="/recipes/{{ rec.0 }}/">Szczegóły</a><br>
         {{rec.1 | safe}} <br>&nbsp;
     </td>
     <td style="width: 20%;">
         <button style="width: 80%;">Dodaj do statystyk</button>
-        <button style="width: 80%;">Edytuj skład</button>
+        <button onclick="location.href='/recipes/{{ rec.0 }}/'" style="width: 80%;" >Szczegóły</button>
         <div style="width: 80%;"> {{rec.2}} </div>
     </td>
 </tr>
