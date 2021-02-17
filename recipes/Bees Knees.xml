@@ -1,0 +1,9 @@
+<Recipe>
+    <Name>Bees Knees</Name>
+    <Ingredients>
+        <Alcohol quantity="60" unit="ml">Gin</Alcohol>
+        <Filler quantity="20" unit="ml">Sok z cytryny</Filler>
+        <Filler quantity="20" unit="ml">Syrop miodowy</Filler>
+        <Filler quantity="10" unit="szt">Sok pomarańczowy</Filler>
+    </Ingredients>
+</Recipe>

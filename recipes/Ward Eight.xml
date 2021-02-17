@@ -1,0 +1,9 @@
+<Recipe>
+    <Name>Ward Eight</Name>
+    <Ingredients>
+        <Alcohol quantity="40" unit="ml">Whisky</Alcohol>
+        <Filler quantity="20" unit="ml">Sok z cytryny</Filler>
+        <Filler quantity="20" unit="ml">Sok pomarańczowy</Filler>
+        <Filler quantity="10" unit="ml">Grenadyna</Filler>
+    </Ingredients>
+</Recipe>

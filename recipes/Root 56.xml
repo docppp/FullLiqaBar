@@ -1,0 +1,10 @@
+<Recipe>
+    <Name>Root 56</Name>
+    <Ingredients>
+        <Alcohol quantity="40" unit="ml">Jaggermeister</Alcohol>
+        <Filler quantity="80" unit="ml">Piwo jasne</Filler>
+        <Filler quantity="10" unit="ml">Sok imbirowy</Filler>
+        <Addon quantity="0.5" unit="szt">Limonka</Addon>
+        <Addon quantity="0.25" unit="szt">Ogórek</Addon>
+    </Ingredients>
+</Recipe>

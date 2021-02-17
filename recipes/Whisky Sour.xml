@@ -1,0 +1,10 @@
+<Recipe>
+    <Name>Whisky Sour</Name>
+    <Ingredients>
+        <Alcohol quantity="40" unit="ml">Whisky</Alcohol>
+        <Filler quantity="20" unit="ml">Sok z cytryny</Filler>
+        <Filler quantity="10" unit="ml">Sok cukrowy</Filler>
+        <Addon quantity="5" unit="ml">Agnostura</Addon>
+        <Addon quantity="1" unit="szt">Białko jajka</Addon>
+    </Ingredients>
+</Recipe>
