@@ -3,6 +3,14 @@
 {% block content %}
 
 <table style="width: 100%;">
+<tr>
+    <th style="text-align: right;">
+        <a href="/myshelf/sort_name">Sort by name</a>
+    </th>
+    <th style="text-align: left;"colspan="3">
+        <a href="/myshelf/sort_qty">Sort by quantity</a>
+    </th>
+</tr>
 {% for bottle in bottle_list %}
 <tr>
     <td style="width: 50%; text-align: right;">

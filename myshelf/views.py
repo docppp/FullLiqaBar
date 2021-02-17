@@ -12,7 +12,10 @@ def myshelf_view(request, *args, **kwargs):
     if request.method == "GET":
         barman = BarmanCopy.useBarman(kwargs.get('barman'))
         shelf = barman.getShelf()
-
+        if kwargs.get('sort') == 'name':
+            shelf.sort(key=lambda x: x[0])
+        if kwargs.get('sort') == 'qty':
+            shelf.sort(key=lambda x: x[1], reverse=True)
         context = {
             'bottle_list': shelf
         }
