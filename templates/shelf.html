@@ -3,19 +3,26 @@
 {% block content %}
 
 <table style="width: 100%;">
-{% for alc in alc_group_by_three %}
-    <tr>
-    <td style="width: 33.3333%; text-align: center;">
-        <strong>{{alc.0.0}}</strong><br>{{alc.0.1}}<br>&nbsp;
+{% for bottle in bottle_list %}
+<tr>
+    <td style="width: 50%; text-align: right;">
+        <strong>{{bottle.0}}</strong>
     </td>
-    <td style="width: 33.3333%; text-align: center;">
-        <strong>{{alc.1.0}}</strong><br>{{alc.1.1}}<br>&nbsp;
+    <td style="width: 50px; text-align: left;">
+        {{bottle.1}}
     </td>
-    <td style="width: 33.3333%; text-align: center;">
-        <strong>{{alc.2.0}}</strong><br>{{alc.2.1}}<br>&nbsp;
+    <td style="width: 40px; text-align: left;">
+        <a href="edit/{{bottle.0}}">[Edit]</a>
     </td>
-    </tr>
+    <td style="text-align: left;">
+        <form name="delete_bottle" method="post">
+            {% csrf_token %}
+        <input type="submit" value="Delete"/>
+        </form>
+    </td>
+</tr>
 {% endfor %}
 </table>
 
 {% endblock %}
+

@@ -12,10 +12,32 @@ def myshelf_view(request, *args, **kwargs):
     if request.method == "GET":
         barman = BarmanCopy.useBarman(kwargs.get('barman'))
         shelf = barman.getShelf()
-        list_of_three = []
-        for i in range(ceil(len(shelf)/3)):
-            list_of_three.append(shelf[i*3:i*3+3])
+
         context = {
-            'alc_group_by_three': list_of_three
+            'bottle_list': shelf
         }
+        return render(request, "shelf.html", context)
+
+    if request.method == "POST":
+        print(request)
+        print(args)
+        print(kwargs)
+        return 1
+
+
+def myshelf_edit_view(request, *args, **kwargs):
+    if request.method == "GET":
+        barman = BarmanCopy.useBarman(kwargs.get('barman'))
+        bottle_qty = barman.db.getBottleQty(kwargs.get('bottle_name'))
+        list_of_three = [(kwargs.get('bottle_name'), bottle_qty)]
+        context = {'alc_group_by_three': list_of_three}
+        return render(request, "shelf.html", context)
+
+
+def myshelf_del_view(request, *args, **kwargs):
+    if request.method == "GET":
+        barman = BarmanCopy.useBarman(kwargs.get('barman'))
+        bottle_qty = barman.db.getBottleQty(kwargs.get('bottle_name'))
+        list_of_three = [(kwargs.get('bottle_name'), bottle_qty)]
+        context = {'alc_group_by_three': list_of_three}
         return render(request, "shelf.html", context)
