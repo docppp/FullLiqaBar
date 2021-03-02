@@ -11,9 +11,7 @@ def recipe_view(request, *args, **kwargs):
         recipes_html = [x['recipe'].toHtmlString() for x in barman.recipes]
         allowed = [barman.checkRecipeReq(x['recipe']) for x in barman.recipes]
 
-        context = {
-            'recipes': zip(names, recipes_html, allowed)
-        }
+        context = {'recipes': zip(names, recipes_html, allowed)}
         return render(request, "recipe.html", context)
 
 
