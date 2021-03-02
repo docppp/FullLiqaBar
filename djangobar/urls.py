@@ -36,7 +36,7 @@ urlpatterns = [
     path('myshelf/del/<str:bottle_name>/', myshelf_del_view, kwargs={'barman': barman}),
 
     path('recipes/', recipe_view, kwargs={'barman': barman}),
-    path('recipes/<int:recipe_id>/', recipe_detail_view, kwargs={'barman': barman}),
+    path('recipes/<str:recipe_name>/', recipe_detail_view, kwargs={'barman': barman}),
 
     url(r'^favicon\.ico$', RedirectView.as_view(url='favicon.ico')),
 ]
