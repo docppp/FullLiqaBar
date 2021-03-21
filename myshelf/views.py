@@ -48,9 +48,10 @@ def myshelf_view(request, *args, **kwargs):
             return redirect("/myshelf/")
 
         if "button_add" in request.POST:
-            if form.is_valid():
+            bottles = [bottle[0] for bottle in barman.getShelf()]
+            if form.is_valid() and form.cleaned_data.get("name") not in bottles:
                 form.save()
-                return redirect("/myshelf/")
+            return redirect("/myshelf/")
 
 
 def myshelf_edit_view(request, *args, **kwargs):
