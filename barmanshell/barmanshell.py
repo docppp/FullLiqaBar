@@ -137,7 +137,8 @@ class BarmanShell:
 
     def deleteBottle(self, bottle_name) -> bool:
         """
-        :param bottle_name: bottle name to be deleted
+        :param bottle_name: bottle name to be deleted\
+        :type bottle_name: str
         :return: True if successfully deleted given bottle name, otherwise False
         """
         print(f"Deleting bottle {bottle_name}.")
