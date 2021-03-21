@@ -3,12 +3,17 @@
 {% block content %}
 
 <table style="width: 100%;">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <input type="submit" value="Add bottle" />
+    </form>
 <tr>
     <th style="text-align: right;">
         <a href="/myshelf/">Default sort</a>&#9;
         <a href="/myshelf/sort_name">Sort by name</a>
     </th>
-    <th style="text-align: left;"colspan="3">
+    <th style="text-align: left;" colspan="3">
         <a href="/myshelf/sort_qty">Sort by quantity</a>
     </th>
 </tr>
