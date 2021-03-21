@@ -8,17 +8,33 @@ def home_view(request, *args, **kwargs):
     return render(request, "base.html", context)
 
 
+def sort_shelf(shelf, sort):
+    shelf.reverse()
+    should_reverse = False
+
+    if sort_shelf.prev_sort == sort:
+        should_reverse = True
+    sort_shelf.prev_sort = 'Default' if should_reverse else sort
+
+    if sort == 'Sort by name':
+        shelf.sort(key=lambda x: x[0], reverse=should_reverse)
+    elif sort == 'Sort by quantity':
+        shelf.sort(key=lambda x: x[1], reverse=not should_reverse)
+    else:
+        sort_shelf.prev_sort = 'Default'
+
+
+sort_shelf.prev_sort = 'Default'
+
+
 def myshelf_view(request, *args, **kwargs):
     form = ShelfForm(request.POST or None)
 
     if request.method == "GET":
         barman = BarmanCopy.useBarman(kwargs.get('barman'))
         shelf = barman.getShelf()
-        shelf.reverse()
-        if kwargs.get('sort') == 'name':
-            shelf.sort(key=lambda x: x[0])
-        if kwargs.get('sort') == 'qty':
-            shelf.sort(key=lambda x: x[1], reverse=True)
+
+        sort_shelf(shelf, request.GET.get('sort'))
 
         context = {
             'bottle_list': shelf,

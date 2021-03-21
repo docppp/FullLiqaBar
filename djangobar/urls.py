@@ -30,8 +30,6 @@ urlpatterns = [
     path('', home_view),
 
     path('myshelf/', myshelf_view, kwargs={'barman': barman}),
-    path('myshelf/sort_name/', myshelf_view, kwargs={'barman': barman, 'sort': 'name'}),
-    path('myshelf/sort_qty/', myshelf_view, kwargs={'barman': barman, 'sort': 'qty'}),
     path('myshelf/edit/<str:bottle_name>/', myshelf_edit_view, kwargs={'barman': barman}),
     path('myshelf/del/<str:bottle_name>/', myshelf_del_view, kwargs={'barman': barman}),
 

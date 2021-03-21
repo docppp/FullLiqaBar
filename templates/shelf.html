@@ -10,11 +10,19 @@
     </form>
 <tr>
     <th style="text-align: right;">
-        <a href="/myshelf/">Default sort</a>&#9;
-        <a href="/myshelf/sort_name">Sort by name</a>
+        <form method="get">
+            <input type="submit" name="sort" value="Sort by name"/>
+        </form>
+    </th>
+    <th style="width: 50px; text-align: left;">
+        <form method="get">
+            <input type="submit" name="sort" value="Sort by quantity"/>
+        </form>
     </th>
     <th style="text-align: left;" colspan="3">
-        <a href="/myshelf/sort_qty">Sort by quantity</a>
+        <form method="get">
+            <input type="submit" name="sort" value="Default sort"/>
+        </form>
     </th>
 </tr>
 {% for bottle in bottle_list %}
