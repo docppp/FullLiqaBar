@@ -6,7 +6,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_table }}
-        <input type="submit" value="Add bottle" />
+        <button type="submit" name="button_add">Add bottle</button>
     </form>
 <tr>
     <th style="text-align: right;">
@@ -37,9 +37,9 @@
         <a href="/myshelf/edit/{{bottle.0}}">[Edit]</a>
     </td>
     <td style="text-align: left;">
-        <form name="delete_bottle" method="post">
+        <form method="post">
             {% csrf_token %}
-        <input type="submit" value="Delete"/>
+        <button type="submit" name="button_delete" value="{{ bottle.0 }}">Delete</button>
         </form>
     </td>
 </tr>

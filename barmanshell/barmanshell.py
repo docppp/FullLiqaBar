@@ -135,6 +135,19 @@ class BarmanShell:
         print(f"SUCCESS: Got bottles info: {bottles}")
         return bottles
 
+    def deleteBottle(self, bottle_name) -> bool:
+        """
+        :param bottle_name: bottle name to be deleted
+        :return: True if successfully deleted given bottle name, otherwise False
+        """
+        print(f"Deleting bottle {bottle_name}.")
+        try:
+            self.db.deleteBottle(bottle_name)
+        except DatabaseError as e:
+            print(e.message)
+            return False
+        return True
+
     def getRecipes(self) -> list[tuple]:
         """
         :return: List of tuples (id, name, path, ingr csv) if success, otherwise empty list

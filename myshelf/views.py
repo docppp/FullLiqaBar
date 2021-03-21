@@ -28,10 +28,10 @@ sort_shelf.prev_sort = 'Default'
 
 
 def myshelf_view(request, *args, **kwargs):
+    barman = BarmanCopy.useBarman(kwargs.get('barman'))
     form = ShelfForm(request.POST or None)
 
     if request.method == "GET":
-        barman = BarmanCopy.useBarman(kwargs.get('barman'))
         shelf = barman.getShelf()
 
         sort_shelf(shelf, request.GET.get('sort'))
@@ -43,9 +43,14 @@ def myshelf_view(request, *args, **kwargs):
         return render(request, "shelf.html", context)
 
     if request.method == "POST":
-        if form.is_valid():
-            form.save()
-        return redirect("/myshelf/")
+        if "button_delete" in request.POST:
+            barman.deleteBottle(request.POST.get('button_delete'))
+            return redirect("/myshelf/")
+
+        if "button_add" in request.POST:
+            if form.is_valid():
+                form.save()
+                return redirect("/myshelf/")
 
 
 def myshelf_edit_view(request, *args, **kwargs):
